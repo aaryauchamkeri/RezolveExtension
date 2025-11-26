@@ -1,0 +1,17 @@
+{
+  "name": "rezolvechatbotbackend",
+  "version": "1.0.0",
+  "description": "Backend for fine tuning and hiding model",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Aarya Chamkeri",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "openai": "^6.2.0"
+  }
+}

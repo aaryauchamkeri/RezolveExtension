@@ -1,0 +1,10 @@
+.gitignore
+
+RezolveChatbotBackend/.env
+RezolveChatbotBackend/node_modules
+RezolveChatbotBackend/package-lock.json
+
+RezolveExtension/node_modules
+RezolveExtension/.eslintrc.cjs
+RezolveExtension/package-lock.json
+RezolveExtension/vite.config.js
