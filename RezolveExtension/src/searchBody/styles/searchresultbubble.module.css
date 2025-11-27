@@ -1,0 +1,23 @@
+.main {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: 0.8rem 1.2rem;
+    margin-bottom: 0.5rem;
+    border-radius: 1.2rem;
+    font-size: 0.95rem;
+    background-color: rgb(232, 232, 232);
+    overflow-wrap: break-word;
+}
+
+.resultHeader {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.resultContent {
+    flex: 2;
+}

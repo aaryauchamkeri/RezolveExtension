@@ -4,52 +4,33 @@
 import { MdOutlinePhotoCamera } from 'react-icons/md';
 import { AiOutlineSend } from 'react-icons/ai';
 import './App.css'
-import Messages from './messageBody/messages';
 import { useEffect, useState } from 'react';
 import Login from './authLock/Login';
+import Searches from './searchBody/search';
+import { performSearch } from './utils/requests';
 
 
 function App() {
   const [images, setImages] = useState([]);
   const [messages, setMessages] = useState([{ text: 'Hi! How can I help you today?', user: 0 }]);
+  const [searchResults, setSearchResults] = useState([]);
   const [input, setInput] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
 
-  const addImg = async () => {
-    const screenshot = await chrome.tabs.captureVisibleTab();
-    const commaIdx = screenshot.indexOf(",");
-    const screenshotBase64 = commaIdx >= 0 ? screenshot.slice(commaIdx + 1) : screenshot;
-    setImages(prev => [...prev, screenshotBase64]);
-  }
-
-  const sendMessage = async () => {
-    const trimmed_text = input.trim();
-    if (trimmed_text.length == 0) return;
-    setMessages(prev => [...prev, { text: trimmed_text, user: 1 }]);
+  const sendQuery = async (query) => {
+    let ip = input;
     setInput("");
-    const screenshot = await chrome.tabs.captureVisibleTab();
-    const commaIdx = screenshot.indexOf(",");
-    const screenshotBase64 = commaIdx >= 0 ? screenshot.slice(commaIdx + 1) : screenshot;
-    let response = await fetch('https://rezolvebackend.onrender.com', {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ "content": trimmed_text, "images": [...images, screenshotBase64] })
-    });
-    let response_json = await response.json();
-    setImages([]);
-    setMessages(prev => [...prev, { text: response_json['response'], user: 0 }]);
-  }
+    let res = await performSearch(ip);
+    res = res.response;
+    let results = [];
 
-
-  useEffect(() => {
-    const messageBody = document.getElementById('messageBody');
-    if (messageBody) {
-      messageBody.scrollTop = messageBody.scrollHeight;
+    for (let i = 0; i < res.results.length; i++) {
+      results.push({ title: res.results[i].file_name, author: res.results_authors[i], text: res.results[i].text });
     }
-  }, [messages])
 
+    console.log(results);
+    setSearchResults(results);
+  }
 
   return (
     <>
@@ -65,12 +46,12 @@ function App() {
 
             <MdOutlinePhotoCamera
               className='button'
-              onClick={addImg}
+            // onClick={addImg}
             />
           </div>
 
           <div className='body'>
-            <Messages id='messageBody' messages={messages} />
+            <Searches results={searchResults} />
           </div>
 
           <div className='footer'>
@@ -83,7 +64,7 @@ function App() {
             />
             <AiOutlineSend
               className='button send_button'
-              onClick={sendMessage}
+              onClick={sendQuery}
             />
           </div>
         </div>

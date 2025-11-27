@@ -3,6 +3,7 @@ import MessageBubble from './messagebubble'
 import styles from './styles/messages.module.css'
 import * as AdaptiveCards from 'adaptivecards'
 import MarkdownIt from "markdown-it"
+import { performSearch } from '../utils/requests';
 
 const dummyCard = {
     "type": "AdaptiveCard",
@@ -46,6 +47,11 @@ export default function Messages({ messages }) {
     const cardRef = useRef(null);
 
     useEffect(() => {
+        (async () => {
+            const res = await performSearch('what is the dress policiy at Rezolve AI?');
+            console.log(res);
+        })()
+
         const adaptiveCard = new AdaptiveCards.AdaptiveCard();
         adaptiveCard.parse(dummyCard);
 
