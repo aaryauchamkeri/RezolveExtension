@@ -1,6 +1,3 @@
-// import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
 import { MdOutlinePhotoCamera } from 'react-icons/md';
 import { AiOutlineSend } from 'react-icons/ai';
 import './App.css'
@@ -46,7 +43,6 @@ function App() {
 
             <MdOutlinePhotoCamera
               className='button'
-            // onClick={addImg}
             />
           </div>
 

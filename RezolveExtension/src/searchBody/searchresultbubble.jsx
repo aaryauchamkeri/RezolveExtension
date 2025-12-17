@@ -1,7 +1,7 @@
 import styles from './styles/searchresultbubble.module.css'
 
 export default function SearchResultBubble({ result }) {
-    console.log(result);
+    // console.log(result);
     return (
         <div className={styles.main}>
             <div className={styles.resultHeader}>
