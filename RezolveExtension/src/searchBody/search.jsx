@@ -7,7 +7,7 @@ export default function Searches({ results }) {
     return (
         <div className={styles.main}>
             {results.map(val => {
-                return <SearchResultBubble result={val} />;
+                return <SearchResultBubble result={val} aiOverview={val.aiOverview} />;
             })}
         </div>
     )

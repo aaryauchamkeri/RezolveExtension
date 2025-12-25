@@ -20,10 +20,20 @@ function App() {
     let res = await performSearch(ip);
     res = res.response;
 
+    console.log('res: ', res);
+
     let results = [];
 
+    results.push({ title: 'AI Overview', author: { name: 'Rezolve AI' }, text: res.summary, aiOverview: true });
+
     for (let i = 0; i < (res.results || []).length; i++) {
-      results.push({ title: res.results[i].file_name, author: res.results_authors ? res.results_authors[i] : null, text: res.results[i].highlight });
+      results.push({
+        title: res.results[i].file_name,
+        author: res.results_authors ? res.results_authors[i] : null,
+        text: res.results[i].highlight,
+        time_stamp: res.results[i].timestamp,
+        aiOverview: false
+      });
     }
 
     console.log(results);
