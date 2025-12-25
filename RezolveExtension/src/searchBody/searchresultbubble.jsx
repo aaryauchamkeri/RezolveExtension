@@ -3,7 +3,6 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 export default function SearchResultBubble({ result, aiOverview = false }) {
-    // console.log(result);
     return (
         <div className={styles.main + (aiOverview ? ' border-2 border-solid border-orange-200' : '')}>
             <div className={styles.resultHeader + ' items-center' + (aiOverview ? ' justify-center' : '')}>
