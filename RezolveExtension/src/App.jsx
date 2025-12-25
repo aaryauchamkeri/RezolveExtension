@@ -4,7 +4,7 @@ import './App.css'
 import { useEffect, useState } from 'react';
 import Login from './authLock/Login';
 import Searches from './searchBody/search';
-import { performSearch } from './utils/requests';
+import { performSearch, sendConversationMessage } from './utils/requests';
 
 
 function App() {
@@ -14,15 +14,16 @@ function App() {
   const [input, setInput] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
 
-  const sendQuery = async (query) => {
-    let ip = input;
+  const sendQuery = async () => {
+    let ip = input; // original query
     setInput("");
     let res = await performSearch(ip);
     res = res.response;
+
     let results = [];
 
-    for (let i = 0; i < res.results.length; i++) {
-      results.push({ title: res.results[i].file_name, author: res.results_authors[i], text: res.results[i].text });
+    for (let i = 0; i < (res.results || []).length; i++) {
+      results.push({ title: res.results[i].file_name, author: res.results_authors ? res.results_authors[i] : null, text: res.results[i].highlight });
     }
 
     console.log(results);
@@ -46,15 +47,15 @@ function App() {
             />
           </div>
 
-          <div className='body'>
+          <div className='body '>
             <Searches results={searchResults} />
           </div>
 
-          <div className='footer'>
+          <div className='footer bg-white'>
             <input
               type='text'
               className='message_box'
-              placeholder='Enter Message'
+              placeholder='Enter Query'
               value={input}
               onChange={(event) => setInput(event.target.value)}
             />

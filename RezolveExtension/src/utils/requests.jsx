@@ -506,18 +506,21 @@ async function sendConversationMessage(message, conversationData, onResultsUpdat
   }
 
   try {
-    // Prepare chat history as [role, content] pairs
-    const chatHistoryArr = chatHistory.map(msg => [msg.role, msg.content]);
+    // Keep chat history as an array of {role, content} objects (preserve structure expected by backend)
+    const chatHistoryPayload = Array.isArray(chatHistory) ? chatHistory : [];
     console.log('Sending conversation message with search ID:', searchId, 'and conversation ID:', conversationId);
     const payload = {
       search_id: searchId, // Include search ID if available, to save conversation context
       conversation_id: conversationId, // Use a consistent conversation ID format
       original_query: originalQuery,
       followup_question: message,
-      conversation_history: chatHistoryArr,
+      conversation_history: chatHistoryPayload,
+      // Include formatted documents so backend can summarise the JSON you provide
+      formatted_documents: formattedDocuments,
       streaming: true,
       generate_response: generate_response
     };
+    console.log('Follow-up payload:', payload);
 
     const response = await fetch(`${API_BASE_URL}/followup_search`, {
       method: 'POST',
