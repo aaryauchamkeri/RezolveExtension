@@ -78,15 +78,23 @@ function App() {
               style={{ width: '2.2rem', height: '2rem' }}
             />
 
-            <div className='flex flex-row gap-x-4'>
+            <select
+              onChange={(e) => { setMode(e.target.value) }}
+              className='bg-[#ebf7fb] cursor-pointer text-lg font-medium p-2 focus:outline-none focus:ring-0'
+            >
+              <option value="search">Search 🔍</option>
+              <option value="chat">Chat 💬</option>
+            </select>
+
+            {/* <div className='flex flex-row gap-x-4'>
               <span onClick={(e) => { setMode('search') }} className={'cursor-pointer text-base ' + (mode === 'search' ? 'font-bold text-blue-600 underline' : 'font-normal text-blue-400')}>
                 Search 🔍
               </span>
-              <div style={{ width: "1px", alignSelf: "stretch", background: "#ccc" }} />
+              <div style={{ width: "1px", alignSelf: "stretch", background: "#b3b3b3ff" }} />
               <span onClick={(e) => { setMode('chat') }} className={'cursor-pointer text-base ' + (mode === 'chat' ? 'font-bold text-blue-600 underline' : 'font-normal text-blue-400')}>
                 Chat 💬
               </span>
-            </div>
+            </div> */}
           </div>
 
           <div className='body '>
