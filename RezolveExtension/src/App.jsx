@@ -10,7 +10,7 @@ import Messages from './messageBody/messages';
 function App() {
   const [images, setImages] = useState([]);
   const [messages, setMessages] = useState([{ text: 'Hi! How can I help you today?', user: 0 }]);
-  const [mode, setMode] = useState('search'); // 'search' or 'chat'
+  const [mode, setMode] = useState('chat'); // 'search' or 'chat'
   const [searchResults, setSearchResults] = useState([]);
   const [input, setInput] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
@@ -85,16 +85,6 @@ function App() {
               <option value="search">Search 🔍</option>
               <option value="chat">Chat 💬</option>
             </select>
-
-            {/* <div className='flex flex-row gap-x-4'>
-              <span onClick={(e) => { setMode('search') }} className={'cursor-pointer text-base ' + (mode === 'search' ? 'font-bold text-blue-600 underline' : 'font-normal text-blue-400')}>
-                Search 🔍
-              </span>
-              <div style={{ width: "1px", alignSelf: "stretch", background: "#b3b3b3ff" }} />
-              <span onClick={(e) => { setMode('chat') }} className={'cursor-pointer text-base ' + (mode === 'chat' ? 'font-bold text-blue-600 underline' : 'font-normal text-blue-400')}>
-                Chat 💬
-              </span>
-            </div> */}
           </div>
 
           <div className='body '>

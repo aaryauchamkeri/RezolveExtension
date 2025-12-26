@@ -5,7 +5,8 @@
     padding: 0.8rem 1.2rem;
     border-radius: 1.2rem;
     font-size: 0.95rem;
-    background-color: rgb(232, 232, 232);
+    background-color: #5a5a5a;
+    color: white;
     margin: 0.2rem;
     overflow-wrap: break-word;
 }
