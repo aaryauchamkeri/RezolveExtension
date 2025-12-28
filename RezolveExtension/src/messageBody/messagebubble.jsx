@@ -1,4 +1,6 @@
-import styles from './styles/messagebubble.module.css'
+import styles from './styles/messagebubble.module.css';
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export default function MessageBubble({ text, user = 1 }) {
     if (user) {
@@ -7,7 +9,11 @@ export default function MessageBubble({ text, user = 1 }) {
         )
     } else {
         return (
-            <div className={styles.main}>{text}</div>
+            <div className={styles.main}>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {text}
+                </ReactMarkdown>
+            </div>
         )
     }
 };

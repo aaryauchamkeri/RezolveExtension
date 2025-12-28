@@ -1,26 +1,19 @@
-// import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
-import { MdOutlinePhotoCamera } from 'react-icons/md';
 import { AiOutlineSend } from 'react-icons/ai';
 import './App.css'
-import Messages from './messageBody/messages';
 import { useEffect, useState } from 'react';
 import Login from './authLock/Login';
+import Searches from './searchBody/search';
+import { performSearch, sendConversationMessage } from './utils/requests';
+import Messages from './messageBody/messages';
 
 
 function App() {
   const [images, setImages] = useState([]);
   const [messages, setMessages] = useState([{ text: 'Hi! How can I help you today?', user: 0 }]);
+  const [mode, setMode] = useState('chat'); // 'search' or 'chat'
+  const [searchResults, setSearchResults] = useState([]);
   const [input, setInput] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
-
-  const addImg = async () => {
-    const screenshot = await chrome.tabs.captureVisibleTab();
-    const commaIdx = screenshot.indexOf(",");
-    const screenshotBase64 = commaIdx >= 0 ? screenshot.slice(commaIdx + 1) : screenshot;
-    setImages(prev => [...prev, screenshotBase64]);
-  }
 
   const sendMessage = async () => {
     const trimmed_text = input.trim();
@@ -42,14 +35,36 @@ function App() {
     setMessages(prev => [...prev, { text: response_json['response'], user: 0 }]);
   }
 
+  const sendQuery = async () => {
+    let ip = input; // original query
+    setInput("");
+    setSearchResults([]);
+    let res = await performSearch(ip);
+    res = res.response;
+
+    let results = [];
+
+    results.push({ title: 'AI Overview', author: { name: 'Rezolve AI' }, text: res.summary, aiOverview: true });
+
+    for (let i = 0; i < (res.results || []).length; i++) {
+      results.push({
+        title: res.results[i].file_name,
+        author: res.results_authors ? res.results_authors[i] : null,
+        text: res.results[i].highlight,
+        time_stamp: res.results[i].timestamp,
+        aiOverview: false
+      });
+    }
+
+    setSearchResults(results);
+  }
 
   useEffect(() => {
     const messageBody = document.getElementById('messageBody');
-    if (messageBody) {
+    if (messageBody && mode === 'chat') {
       messageBody.scrollTop = messageBody.scrollHeight;
     }
-  }, [messages])
-
+  }, [messages, mode])
 
   return (
     <>
@@ -63,27 +78,30 @@ function App() {
               style={{ width: '2.2rem', height: '2rem' }}
             />
 
-            <MdOutlinePhotoCamera
-              className='button'
-              onClick={addImg}
-            />
+            <select
+              onChange={(e) => { setMode(e.target.value) }}
+              className='bg-[#ebf7fb] cursor-pointer text-lg font-medium p-2 focus:outline-none focus:ring-0'
+            >
+              <option value="search">Search 🔍</option>
+              <option value="chat">Chat 💬</option>
+            </select>
           </div>
 
-          <div className='body'>
-            <Messages id='messageBody' messages={messages} />
+          <div className='body '>
+            {mode === 'search' ? <Searches results={searchResults} /> : <Messages messages={messages} />}
           </div>
 
-          <div className='footer'>
+          <div className='footer bg-white'>
             <input
               type='text'
               className='message_box'
-              placeholder='Enter Message'
+              placeholder={'Enter ' + (mode === 'search' ? 'Query' : 'Message')}
               value={input}
               onChange={(event) => setInput(event.target.value)}
             />
             <AiOutlineSend
               className='button send_button'
-              onClick={sendMessage}
+              onClick={mode === 'search' ? sendQuery : sendMessage}
             />
           </div>
         </div>

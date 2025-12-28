@@ -1,0 +1,26 @@
+.main {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    padding: 0.8rem 1.2rem;
+    margin-bottom: 0.75rem;
+    border-radius: 1.2rem;
+    font-size: 0.95rem;
+    background-color: rgb(255, 255, 255);
+    overflow-wrap: break-word;
+    box-shadow: 0.5rem 0.5rem 0.5rem rgba(0, 0, 0, 0.1);
+}
+
+.resultHeader {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.resultContent {
+    flex: 2;
+}
