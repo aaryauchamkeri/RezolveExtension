@@ -2,38 +2,19 @@ import { AiOutlineSend } from 'react-icons/ai';
 import './App.css'
 import { useEffect, useState } from 'react';
 import Login from './authLock/Login';
-import Searches from './searchBody/search';
-import { performSearch, sendConversationMessage } from './utils/requests';
+import Search from './searchBody/search';
 import Messages from './messageBody/messages';
 
+const SERVER = 'https://rezolvebackend.onrender.com';
 
 function App() {
   const [images, setImages] = useState([]);
-  const [messages, setMessages] = useState([{ text: 'Hi! How can I help you today?', user: 0 }]);
+  const [messages, setMessages] = useState([{ content: 'Hi! How can I help you today?', role: 'assistant' }]);
   const [mode, setMode] = useState('chat'); // 'search' or 'chat'
+  const [renderer, setRenderer] = useState(5e-324);
   const [searchResults, setSearchResults] = useState([]);
   const [input, setInput] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
-
-  const sendMessage = async () => {
-    const trimmed_text = input.trim();
-    if (trimmed_text.length == 0) return;
-    setMessages(prev => [...prev, { text: trimmed_text, user: 1 }]);
-    setInput("");
-    const screenshot = await chrome.tabs.captureVisibleTab();
-    const commaIdx = screenshot.indexOf(",");
-    const screenshotBase64 = commaIdx >= 0 ? screenshot.slice(commaIdx + 1) : screenshot;
-    let response = await fetch('https://rezolvebackend.onrender.com', {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ "content": trimmed_text, "images": [...images, screenshotBase64] })
-    });
-    let response_json = await response.json();
-    setImages([]);
-    setMessages(prev => [...prev, { text: response_json['response'], user: 0 }]);
-  }
 
   const sendQuery = async () => {
     let ip = input; // original query
@@ -75,23 +56,20 @@ function App() {
           <div className='header'>
             <img
               src='./rezolve_logo.png'
-              style={{ width: '2.2rem', height: '2rem' }}
+              style={{ width: '2.35rem', height: '2rem' }}
             />
 
-            <select
-              onChange={(e) => { setMode(e.target.value) }}
-              className='bg-[#ebf7fb] cursor-pointer text-lg font-medium p-2 focus:outline-none focus:ring-0'
+            <button className="ml-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-150 flex items-center gap-1.5 whitespace-nowrap"
+              onClick={(e) => { setRenderer(val => val + 1); }}
             >
-              <option value="search">Search 🔍</option>
-              <option value="chat">Chat 💬</option>
-            </select>
+              <i class="fa-solid fa-magnifying-glass"></i>New Search
+            </button>
           </div>
 
-          <div className='body '>
-            {mode === 'search' ? <Searches results={searchResults} /> : <Messages messages={messages} />}
-          </div>
+          {/* <Messages /> */}
+          <Search renderer={renderer} />
 
-          <div className='footer bg-white'>
+          {/* <div className='footer bg-white'>
             <input
               type='text'
               className='message_box'
@@ -103,7 +81,7 @@ function App() {
               className='button send_button'
               onClick={mode === 'search' ? sendQuery : sendMessage}
             />
-          </div>
+          </div> */}
         </div>
       )}
     </>

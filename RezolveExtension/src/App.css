@@ -3,7 +3,7 @@
   width: 100vw;
   display: flex;
   flex-direction: column;
-  background-color: rgb(235, 247, 251);
+  background-image: linear-gradient(to bottom right, #fafafa, #D0E2F8);
 }
 
 .header {
@@ -27,7 +27,7 @@
   object-fit: fill;
 }
 
-.footer {
+/* .footer {
   border-width: 0.75px;
   border-color: rgb(228, 228, 228);
   border-style: solid;
@@ -40,7 +40,7 @@
   margin: 0 0.75rem 0.75rem 0.75rem;
   border-radius: 1rem;
   box-shadow: 0 0.5rem 0.75rem rgba(0, 0, 0, 0.2);
-}
+} */
 
 .message_box {
   flex: 9;
