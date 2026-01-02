@@ -19,7 +19,7 @@ export default function SearchResultBubble({ result, aiOverview = false, input, 
         console.log(originalQuery.current);
     }, []);
 
-    if (ind < result.text.length && result.text[ind] !== '\n') {
+    if (ind < result.text.length) {
         setTimeout(() => {
             setInd(ind + 1);
         }, 10)
@@ -28,19 +28,38 @@ export default function SearchResultBubble({ result, aiOverview = false, input, 
     return (
         <div className={styles.main + (aiOverview ? ' border-2 border-solid border-orange-200' : '') + ' transition-transform duration-200 hover:-translate-y-1'}>
             <div className={styles.resultHeader + ' items-center' + (aiOverview ? ' justify-center' : '')}>
-                <span className={(aiOverview ? 'text-2xl font-semibold' : 'font-semibold text-lg hover:cursor-pointer') + ' font-semibold'}>{result.title}</span>
+                <span className={(aiOverview ? 'text-2xl font-semibold' : 'font-semibold text-lg hover:cursor-pointer') + ' font-semibold'}>
+                    {!aiOverview ? <i class="fas fa-file-word text-blue-600 rounded-full mr-2" /> : null}
+                    {result.title}
+                </span>
                 {!aiOverview ?
                     <div className='p-2 bg-indigo-600 rounded-xl'>
                         <span className='text-xs text-white whitespace-nowrap'>{result.author.name}</span>
                     </div> : null
                 }
             </div>
-            <div className={styles.resultContent}>
-                {aiOverview ? <div className='w-full flex flex-row justify-end items-center my-3'><div class="rounded-tl-full rounded-tr-full rounded-bl-full px-3 py-1 text-sm font-medium border transition-colors duration-150 focus:outline-none bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100 cursor-pointer truncate"
-                    onClick={(e) => { suggestionClickHandler(e, setInput, sendQuery) }}
-                >
-                    <i class="fa-solid fa-magnifying-glass mr-1"></i> {originalQuery.current}
-                </div></div> : null}
+            <div className={styles.resultContent + ' w-full'}>
+                {aiOverview ? (
+                    <div className="flex flex-col items-end w-full my-3">
+                        <div
+                            onClick={(e) => suggestionClickHandler(e, setInput, sendQuery)}
+                            className="
+                                max-w-[100%] min-w-0 w-full
+                                inline-flex items-center gap-2
+                                rounded-tl-full rounded-tr-full rounded-bl-full
+                                px-3 py-1 text-sm font-medium
+                                border border-purple-200 bg-purple-50 text-purple-700
+                                hover:bg-purple-100 cursor-pointer truncate
+                            "
+                            title={originalQuery.current}
+                        >
+                            <i className="fa-solid fa-magnifying-glass shrink-0" />
+                            <span className="min-w-0 truncate">
+                                {originalQuery.current}
+                            </span>
+                        </div>
+                    </div>
+                ) : null}
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {result.text.slice(0, ind)}
                 </ReactMarkdown>

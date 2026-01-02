@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import SearchResultBubble from './searchresultbubble';
 import styles from './styles/search.module.css'
-import { performSearch } from '../utils/requests';
+import { getAutofillSuggestions, performSearch } from '../utils/requests';
 import LoadingAnimation from './loadingAnimation';
+import KnowledgeablePeople from './knowledgeablePeopleBubble';
 
 function suggestionClickHandler(e, setInput, sendQuery) {
     let qval = e.currentTarget.innerText;
@@ -10,25 +11,38 @@ function suggestionClickHandler(e, setInput, sendQuery) {
     sendQuery(qval);
 }
 
-export default function Search({ renderer }) {
+export default function Search({ renderer, setDisabler }) {
     let [input, setInput] = useState("");
     let [searchResults, setSearchResults] = useState([]);
+    let [relavantPeople, setRelevantPeople] = useState([]);
     let [loadingAnimation, setLoadingAnimation] = useState(false);
-    let [stylesState, setStylesState] = useState(' flex flex-col justify-center items-center');
+    let [stylesState, setStylesState] = useState(' flex flex-col items-center');
+    let [autofillSuggestions, setAutofillSuggestions] = useState([]);
 
     useEffect(() => {
         setInput("");
         setSearchResults([]);
-        setStylesState(' flex flex-col justify-center items-center');
+        setStylesState(' flex flex-col items-center');
     }, [renderer]);
 
+    useEffect(() => {
+        (async () => {
+            let suggestions = await getAutofillSuggestions(input);
+            setAutofillSuggestions(suggestions.map((s) => s[0]));
+            // setAutofillSuggestions(suggestions.response);
+        })();
+    }, [input]);
+
     const sendQuery = async (ip = input) => {
+        setRelevantPeople([]);
         setSearchResults([]);
         setLoadingAnimation(true);
-        setStylesState(' flex flex-col justify-center items-center');
+        setDisabler(true);
+        setStylesState(' flex flex-col items-center');
         let res = await performSearch(ip);
-        console.log('res: ', res);
         res = res.response;
+
+        console.log('res: ', res);
 
         let results = [];
 
@@ -44,6 +58,8 @@ export default function Search({ renderer }) {
             });
         }
 
+        setRelevantPeople(res.relevant_authors);
+        setDisabler(false);
         setLoadingAnimation(false);
         setStylesState('');
         setSearchResults(results);
@@ -55,8 +71,9 @@ export default function Search({ renderer }) {
             {searchResults.length ? searchResults.map(val => {
                 // the input resets inside the SearhResultBubble
                 return <SearchResultBubble result={val} aiOverview={val.aiOverview} input={input} setInput={setInput} sendQuery={sendQuery} />;
-            }) : null}
+            }).concat(<KnowledgeablePeople people={relavantPeople} />) : null}
             {!loadingAnimation && !searchResults.length ? <>
+                <div className='w-full' style={{ height: '30%' }} />
                 <span className='text-3xl md:text-6xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent leading-tight'>
                     Enterprise Knowledge Search
                 </span>
@@ -80,26 +97,27 @@ export default function Search({ renderer }) {
                     </div>
                 </div>
                 <div className='w-full bg-white px-2 py-4 rounded-md shadow-md flex flex-col gap-2'>
-                    <span className='text-sm text-gray-600 font-medium mb-2 ml-2'>Popular Searches</span>
+                    {input.length == 0 ? <span className='text-sm text-gray-600 font-medium mb-2 ml-2'>Popular Searches</span> : null}
                     <ul class="list-none p-0 m-0">
-                        <li class="px-2 py-1 cursor-pointer transition-colors duration-200 rounded hover:bg-gray-100"
-                            onClick={(e) => { (suggestionClickHandler(e, setInput, sendQuery)) }}
-                        >
-                            <i class="fa-solid fa-arrow-trend-up mr-2" />
-                            What is the dress code policy?
-                        </li>
-                        <li class="px-2 py-1 cursor-pointer transition-colors duration-200 rounded hover:bg-gray-100"
-                            onClick={(e) => { suggestionClickHandler(e, setInput, sendQuery) }}
-                        >
-                            <i class="fa-solid fa-arrow-trend-up mr-2" />
-                            What is the PTO policy?
-                        </li>
-                        <li class="px-2 py-1 cursor-pointer transition-colors duration-200 rounded hover:bg-gray-100"
-                            onClick={(e) => { suggestionClickHandler(e, setInput, sendQuery) }}
-                        >
-                            <i class="fa-solid fa-arrow-trend-up mr-2" />
-                            What are the best practices?
-                        </li>
+                        {input.length == 0 ? <>
+                            <li class="px-2 py-1 cursor-pointer transition-colors duration-200 rounded hover:bg-gray-100"
+                                onClick={(e) => { (suggestionClickHandler(e, setInput, sendQuery)) }}
+                            >
+                                <i class="fa-solid fa-arrow-trend-up mr-2" />
+                                What is the dress code policy?
+                            </li>
+                            <li class="px-2 py-1 cursor-pointer transition-colors duration-200 rounded hover:bg-gray-100"
+                                onClick={(e) => { suggestionClickHandler(e, setInput, sendQuery) }}
+                            >
+                                <i class="fa-solid fa-arrow-trend-up mr-2" />
+                                What is the PTO policy?
+                            </li>
+                            <li class="px-2 py-1 cursor-pointer transition-colors duration-200 rounded hover:bg-gray-100"
+                                onClick={(e) => { suggestionClickHandler(e, setInput, sendQuery) }}
+                            >
+                                <i class="fa-solid fa-arrow-trend-up mr-2" />
+                                What are the best practices?
+                            </li></> : autofillSuggestions.map((suggestion) => <li class="px-2 py-1 cursor-pointer transition-colors duration-200 rounded hover:bg-gray-100 text-sm" onClick={(e) => { (suggestionClickHandler(e, setInput, sendQuery)) }}><i class="fa-solid fa-magnifying-glass mr-2"></i>{suggestion}</li>)}
                     </ul>
                 </div>
             </> : null}

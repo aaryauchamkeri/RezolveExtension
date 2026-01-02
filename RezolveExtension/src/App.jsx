@@ -11,6 +11,7 @@ function App() {
   const [images, setImages] = useState([]);
   const [messages, setMessages] = useState([{ content: 'Hi! How can I help you today?', role: 'assistant' }]);
   const [mode, setMode] = useState('chat'); // 'search' or 'chat'
+  const [disabled, setDisabled] = useState(false);
   const [renderer, setRenderer] = useState(5e-324);
   const [searchResults, setSearchResults] = useState([]);
   const [input, setInput] = useState("");
@@ -61,13 +62,14 @@ function App() {
 
             <button className="ml-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-150 flex items-center gap-1.5 whitespace-nowrap"
               onClick={(e) => { setRenderer(val => val + 1); }}
+              disabled={disabled}
             >
               <i class="fa-solid fa-magnifying-glass"></i>New Search
             </button>
           </div>
 
           {/* <Messages /> */}
-          <Search renderer={renderer} />
+          <Search renderer={renderer} setDisabler={setDisabled} />
 
           {/* <div className='footer bg-white'>
             <input
